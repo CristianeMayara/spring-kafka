@@ -2,6 +2,7 @@ package com.cristiane.springKafka.entrypoint.controller;
 
 import com.cristiane.springKafka.core.usecase.FindCustomerByIdUseCase;
 import com.cristiane.springKafka.core.usecase.InsertCustomerUseCase;
+import com.cristiane.springKafka.core.usecase.UpdateCustomerUseCase;
 import com.cristiane.springKafka.entrypoint.controller.mapper.CustomerMapper;
 import com.cristiane.springKafka.entrypoint.controller.request.CustomerRequest;
 import com.cristiane.springKafka.entrypoint.controller.response.CustomerResponse;
@@ -21,6 +22,9 @@ public class CustomerController {
     private FindCustomerByIdUseCase findCustomerByIdUseCase;
 
     @Autowired
+    private UpdateCustomerUseCase updateCustomerUseCase;
+
+    @Autowired
     private CustomerMapper customerMapper;
 
     @PostMapping
@@ -37,6 +41,16 @@ public class CustomerController {
         var customerResponse = customerMapper.toCustomerResponse(customer);
 
         return ResponseEntity.ok().body(customerResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable final String id,
+                                       @Valid @RequestBody CustomerRequest customerRequest) {
+        var customer = customerMapper.toCustomer(customerRequest);
+        customer.setId(id);
+        updateCustomerUseCase.update(customer, customerRequest.getZipCode());
+
+        return ResponseEntity.noContent().build();
     }
 
 }
