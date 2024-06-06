@@ -1,5 +1,6 @@
 package com.cristiane.springKafka.entrypoint.controller;
 
+import com.cristiane.springKafka.core.usecase.DeleteCustomerByIdUseCase;
 import com.cristiane.springKafka.core.usecase.FindCustomerByIdUseCase;
 import com.cristiane.springKafka.core.usecase.InsertCustomerUseCase;
 import com.cristiane.springKafka.core.usecase.UpdateCustomerUseCase;
@@ -23,6 +24,9 @@ public class CustomerController {
 
     @Autowired
     private UpdateCustomerUseCase updateCustomerUseCase;
+
+    @Autowired
+    private DeleteCustomerByIdUseCase deleteCustomerByIdUseCase;
 
     @Autowired
     private CustomerMapper customerMapper;
@@ -50,6 +54,12 @@ public class CustomerController {
         customer.setId(id);
         updateCustomerUseCase.update(customer, customerRequest.getZipCode());
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable final String id) {
+        deleteCustomerByIdUseCase.delete(id);
         return ResponseEntity.noContent().build();
     }
 
